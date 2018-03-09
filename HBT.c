@@ -372,14 +372,18 @@ int main()
      { int inskey,  *insobj, success;
        insobj = (int *) malloc(sizeof(int));
        scanf(" %d", &inskey);
-       *insobj = 10*inskey+2;
-       success = insert( searchtree, inskey, insobj );
-       if ( success == 0 )
-          printf("  insert successful, key = %d, object value = %d, "
-                 "height is %d, and leaves is %d\n",       /////////Modified
-              inskey, *insobj, searchtree->height,searchtree->leaves );
-       else
-           printf("  insert failed, success = %d\n", success);
+	   if(inskey > -1000 && inskey < 1000){
+		   *insobj = 10*inskey+2;
+		   success = insert( searchtree, inskey, insobj );
+		   if ( success == 0 )
+			  printf("  insert successful, key = %d, object value = %d, "
+					 "height is %d, and leaves is %d\n",       /////////Modified
+				  inskey, *insobj, searchtree->height,searchtree->leaves );
+		   else
+			   printf("  insert failed, success = %d\n", success);
+	   }
+	   else
+	 printf("Must have |value| < 1000\n");
      }
 	 // Finds nodes
      if( nextop == 'f' )
