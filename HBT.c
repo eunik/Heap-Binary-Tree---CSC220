@@ -1,6 +1,7 @@
 /* Eun Il Kim */
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 #define BLOCKSIZE 256
 
@@ -125,6 +126,7 @@ object_t *find_by_number(tree_node_t *tree, int k){
 
 
 int insert(tree_node_t *tree, key_t new_key, object_t *new_object)
+//if empty we place a node with a left root and NULL right root
 {  tree_node_t *tmp_node;
    int finished;
    if( tree->left == NULL )
@@ -137,6 +139,9 @@ int insert(tree_node_t *tree, key_t new_key, object_t *new_object)
    else
      {  tree_node_t * path_stack[100]; int  path_st_p = 0;
       tmp_node = tree;
+	  //We save the address of the left child node if the new 
+		//node is less than the current. Otherwise it's right
+		//child node
       while( tmp_node->right != NULL )
       {   path_stack[path_st_p++] = tmp_node;
           if( new_key < tmp_node->key )
@@ -148,6 +153,8 @@ int insert(tree_node_t *tree, key_t new_key, object_t *new_object)
       if( tmp_node->key == new_key )
          return( -1 );
       /* key is distinct, now perform the insert */
+	  //Saves the current node
+	  //And sets up a new node with left tree_node obj and right NULL
       {  tree_node_t *old_leaf, *new_leaf;
          old_leaf = get_node();
          old_leaf->left = tmp_node->left;
@@ -158,14 +165,15 @@ int insert(tree_node_t *tree, key_t new_key, object_t *new_object)
          new_leaf = get_node();
          new_leaf->left = (tree_node_t *) new_object;
          new_leaf->key = new_key;
-         new_leaf->right  = NULL;
+         new_leaf->right = NULL;
          new_leaf->height = 0;
          new_leaf->leaves=1;                ///////////Modified
+		 //Places the new node on the right if greater than current node
          if( tmp_node->key < new_key )
          {   tmp_node->left  = old_leaf;
              tmp_node->right = new_leaf;
              tmp_node->key = new_key;
-         }
+         }//Otherwise to the left
          else
          {   tmp_node->left  = new_leaf;
              tmp_node->right = old_leaf;
@@ -242,6 +250,7 @@ object_t *delete(tree_node_t *tree, key_t delete_key)
    {  if(  tree->key == delete_key )
       {  deleted_object = (object_t *) tree->left;
          tree->left = NULL;
+         tree->leaves--;
          return( deleted_object );
       }
       else
@@ -328,7 +337,7 @@ object_t *delete(tree_node_t *tree, key_t delete_key)
              finished = 1;
       }
        while(path_st_p>0)                 ///////////Modified
-           path_stack[--path_st_p]->leaves--; ///////Modified      
+           path_stack[--path_st_p]->leaves--; ///////Modified
       /*end rebalance*/
       return( deleted_object );
    }
@@ -342,7 +351,7 @@ void check_tree( tree_node_t *tr, int depth, int lower, int upper )
          printf("Wrong Key Order \n");
    if( tr->right == NULL )
    {  if( *( (int *) tr->left) == 10*tr->key + 2 )
-         printf("%d(%d)  ", tr->key, depth );
+         printf("%d(%d)  ", tr->key, depth);
       else
          printf("Wrong Object \n");
    }
@@ -358,7 +367,8 @@ int main()
    searchtree = create_tree();
    printf("Made Tree: Height-Balanced Tree\n");
    while( (nextop = getchar())!= 'q' )
-   { if( nextop == 'i' )
+   { // Insert new node
+	if( nextop == 'i' )
      { int inskey,  *insobj, success;
        insobj = (int *) malloc(sizeof(int));
        scanf(" %d", &inskey);
@@ -371,6 +381,7 @@ int main()
        else
            printf("  insert failed, success = %d\n", success);
      }
+	 // Finds nodes
      if( nextop == 'f' )
      { int findkey, *findobj;
        scanf(" %d", &findkey);
@@ -381,6 +392,7 @@ int main()
          printf("  find successful, found object %d\n", *findobj);
      }
    //////////////////MODIFIED/////////////////////
+   // Finds the leaves
      if( nextop == 'l' )
      { int findkey, *findobj;
        scanf(" %d", &findkey);
@@ -390,6 +402,7 @@ int main()
        else
          printf("  find successful, found object %d\n", *findobj);
      }
+	// Deletes tree node
      if( nextop == 'd' )
      { int delkey, *delobj;
        scanf(" %d", &delkey);
@@ -401,6 +414,7 @@ int main()
                  " and leaves is now %d\n",  /////////Modified
                  *delobj, searchtree->height,searchtree->leaves);
      }
+	// Prints the tree 
      if( nextop == '?' )
      {  printf("  Checking tree\n");
         check_tree(searchtree,0,-1000,1000);
@@ -411,6 +425,6 @@ int main()
          searchtree->key, searchtree->height, searchtree->leaves);
         printf("  Finished Checking tree\n");
      }
-   }   
+   }
    return(0);
 }
