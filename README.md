@@ -29,4 +29,6 @@ insert successful, key = 0, object value = 2, height is 0, and leaves is 1
 key in root is 0, height of tree is 0, and leaves of tree is now 1
   Finished Checking tree
 ```
-The first number is the node and the number in the paranthesis is depth (number of levels from bottom up)
+The first number is the node and the number in the paranthesis is depth (number of levels from bottom up).  
+The top node is not unique, it is only a place holder. That is why you won't see the greatest root number (depth number).  
+The number should be (-1000,1000)
