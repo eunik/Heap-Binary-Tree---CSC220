@@ -1,4 +1,4 @@
-# Heap-Binary-Tree---CSC220
+# Height-Balanced-Tree---CSC220
 
 The purpose of this code is to sort a list using a heap binary tree.
 
